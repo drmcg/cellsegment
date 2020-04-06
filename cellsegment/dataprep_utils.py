@@ -156,6 +156,7 @@ def make_label_img_from_json(jdata, img, radius=20):
     # for s, sh in enumerate(jdata['shapes']):
     for sh in jdata['shapes']:
         fill = DEFAULT_LABEL_FILL
+        code = DEFAULT_LABEL_CODE
         try:
             it = CLASS_LABELS[sh['label']]
             fill = it['Fill']
@@ -250,7 +251,7 @@ def __crop_image(jsonfn, imgfn, dest_path, size=200, op:str='', debug=False):
     assert suffix == '.jpg' or suffix == '.png', "image file type must be jpg or png"
     imgShape = img.shape
 
-    colormap = colormap_segmentation_labels()
+    colormap = old_colormap_segmentation_labels()
     n = 0
     croplist = []
     for n, sh in enumerate(data['shapes']):
@@ -468,7 +469,7 @@ def create_labels_dir(json_path, dest_path, number_files='all'):
     fnames_json = sorted(get_files(json_path, extensions=['.json']))
     if isinstance(number_files, int):
         fnames_json = fnames_json[:number_files]
-    colormap = colormap_segmentation_labels()
+    colormap = old_colormap_segmentation_labels()
     print("Number of json files to process", len(fnames_json))
 
     if 1:
