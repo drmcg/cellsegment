@@ -123,12 +123,14 @@ def create_json_from_CSV(csv_fn, load_jpg_fn, offset=0, height=0, width=0):
     # species_name = ['Nematodirus', 'Strongyle', 'other']
 
     egg_centers = []
-    with open(csv_fn, mode='r') as f:
-        line_count = 0
-        for line in f:
-            row, col, species = [int(x) for x in line.split(',')]
-            egg_centers.append({"label": species, "particleType": species, "point": [row, col]})
-            line_count += 1
+
+    if (os.path.isfile(csv_fn)):
+        with open(csv_fn, mode='r') as f:
+            line_count = 0
+            for line in f:
+                row, col, species = [int(x) for x in line.split(',')]
+                egg_centers.append({"label": species, "particleType": species, "point": [row, col]})
+                line_count += 1
 
     data = annotate_json(data, points=egg_centers)
     data
@@ -154,15 +156,16 @@ def csv_to_json_dir(src_path, dest_path, number_files='all'):
     print(f"src_path {src_path}")
     print(f"dest_path {dest_path}")
 
-    for i,fn in enumerate(fnames_csv):
+    for i,fn in enumerate(fnames_jpg):
         parent = Path(fn).parents[0]
         name = Path(fn).name.split('.')[0]
+        csv_fn = f"{parent}/{name}.csv"
         jpg_fn = f"{parent}/{name}.jpg"
         json_fn = f"{parent}/{name}.json"
 
         if Path(jpg_fn).is_file():
             img = PIL.Image.open(jpg_fn)
-            data = create_json_from_CSV(fn, Path(jpg_fn).name, height=img.size[1], width=img.size[0])
+            data = create_json_from_CSV(Path(csv_fn).name, Path(jpg_fn).name, height=img.size[1], width=img.size[0])
             with open(json_fn, 'w') as outfile:
                 # json.dump(data, outfile, indent=2)
                 # print(f'Saving File {json_fn}')
